@@ -5,7 +5,7 @@ const checkProxyStatus = async () => {
       signal: AbortSignal.timeout(5000),
     });
     if (!response.ok) throw new Error("Proxy check failed");
-    console.log("Proxy is active");
+    // console.log("Proxy is active");
     return true;
   } catch (error) {
     console.error("Proxy check failed:", error.message);
@@ -15,9 +15,14 @@ const checkProxyStatus = async () => {
 
 const getProxy = async () => {
   console.log("Tool Proxy Xoay được phát triển bởi YUNO TEAM");
-  const { apiKey } = await chrome.storage.local.get("apiKey");
-  const { timeReset } = await chrome.storage.local.get("timeReset");
-
+  const { apiKey, timeReset, autoReset, nhamang, tinhthanh } =
+    await chrome.storage.local.get([
+      "apiKey",
+      "timeReset",
+      "autoReset",
+      "nhamang",
+      "tinhthanh",
+    ]);
   if (!apiKey) {
     chrome.runtime.sendMessage({
       type: "error",
@@ -29,15 +34,15 @@ const getProxy = async () => {
 
   await chrome.proxy.settings.clear({ scope: "regular" });
   try {
-    console.log("Calling API with key:", apiKey);
     const response = await fetch(
-      `https://proxyxoay.org/api/get.php?key=${apiKey}&nhamang=random&tinhthanh=0`,
+      `https://proxyxoay.org/api/get.php?key=${apiKey}&nhamang=${
+        nhamang || "random"
+      }&tinhthanh=${tinhthanh || "0"}`,
       { signal: AbortSignal.timeout(10000) }
     );
     const data = await response.json();
-    console.log("API response:", data);
+    // console.log("API response:", data);
     if (data.status === 100) {
-      console.log("Proxy data:", data);
       setProxy(data.proxyhttp);
       const expirationTime = parseInt(data.message.match(/\d+/)[0], 10) * 1000;
       const expirationTimestamp = Date.now() + expirationTime;
@@ -45,7 +50,6 @@ const getProxy = async () => {
         currentProxy: data,
         expirationTimestamp,
       });
-      console.log("Sending proxyUpdate with waitTime:", expirationTime);
       chrome.runtime.sendMessage({
         type: "proxyUpdate",
         proxy: data,
@@ -54,9 +58,14 @@ const getProxy = async () => {
       chrome.alarms.create("updateProxy", {
         delayInMinutes: expirationTime / 60000,
       });
-      // Bắt đầu kiểm tra proxy định kỳ
-      chrome.alarms.create("checkProxy", { periodInMinutes: 1 }); // Kiểm tra mỗi 30 giây
-      chrome.alarms.create("timeReset", { periodInMinutes: timeReset });
+      chrome.alarms.create("checkProxy", { periodInMinutes: 1 });
+      if (autoReset) {
+        const resetMinutes =
+          Number.isFinite(timeReset) && timeReset > 0 ? timeReset : 1;
+        chrome.alarms.create("timeReset", { periodInMinutes: resetMinutes });
+      } else {
+        console.log("Auto reset disabled, skipping timeReset alarm");
+      }
     } else {
       const waitTimeMatch = data.message.match(/(\d+)/);
       const waitTime = waitTimeMatch
@@ -66,7 +75,6 @@ const getProxy = async () => {
         currentError: { message: data.message, waitTime },
         expirationTimestamp: Date.now() + waitTime,
       });
-      console.log("Sending error with waitTime:", waitTime);
       chrome.runtime.sendMessage({
         type: "error",
         message: data.message,
@@ -109,7 +117,6 @@ const setProxy = (proxyString) => {
       scope: "regular",
     },
     () => {
-      console.log("Proxy set to:", proxyString);
       chrome.webRequest.onAuthRequired.addListener(
         (details, callbackFn) => {
           callbackFn({
@@ -128,47 +135,56 @@ getProxy();
 chrome.alarms.onAlarm.addListener((alarm) => {
   switch (alarm.name) {
     case "updateProxy":
-      console.log("Proxy hết hạn, đang lấy proxy mới...");
       getProxy();
-      return;
-
+      break;
     case "retryProxy":
-      console.log("Đang thử lại sau lỗi...");
       getProxy();
-      return;
-
+      break;
     case "timeReset":
-      console.log("Đang tự động reset...");
       getProxy();
-      return;
-
+      break;
     case "checkProxy":
-      console.log("Checking proxy status...");
       checkProxyStatus().then((isActive) => {
         if (!isActive) {
-          console.log("Proxy not active, fetching new proxy...");
           getProxy();
         }
       });
-      return;
-
+      break;
     default:
-      console.log("Out case");
-      return;
+      console.log("Unknown alarm:", alarm.name);
+      break;
   }
 });
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.type === "setApiKey") {
-    console.log("Received setApiKey messageacasc:", message);
-
+    // console.log("Received setApiKey message:", message);
     chrome.storage.local.set(
-      { apiKey: message.apiKey, timeReset: message.timeReset },
+      {
+        apiKey: message.apiKey,
+        timeReset: message.timeReset,
+        autoReset: message.autoReset,
+        nhamang: message.nhamang,
+        tinhthanh: message.tinhthanh,
+      },
       () => {
-        console.log("Đã lưu API key:", message.apiKey);
+        // console.log(
+        //   "Đã lưu API key:",
+        //   message.apiKey,
+        //   "timeReset:",
+        //   message.timeReset,
+        //   "autoReset:",
+        //   message.autoReset,
+        //   "nhamang:",
+        //   message.nhamang,
+        //   "tinhthanh:",
+        //   message.tinhthanh
+        // );
         getProxy();
       }
     );
+    // Gửi phản hồi để tránh lỗi message port closed (dù không bắt buộc)
+    sendResponse({ status: "ok" });
   } else if (message.type === "requestProxyUpdate") {
     chrome.storage.local.get(
       ["currentProxy", "currentError", "expirationTimestamp"],
@@ -198,8 +214,10 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         }
       }
     );
+    sendResponse({ status: "ok" });
   } else if (message.type === "reloadApi") {
-    console.log("reloadApi");
+    console.log("Received reloadApi message");
     getProxy();
+    sendResponse({ status: "ok" });
   }
 });

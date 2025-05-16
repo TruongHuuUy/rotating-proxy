@@ -1,37 +1,55 @@
+const countdownIntervals = {
+  proxy: null,
+  error: null,
+};
+
 document.getElementById("saveKey").addEventListener("click", () => {
   const apiKey = document.getElementById("apiKey").value;
-  const timeReset = document.getElementById("timeReset").value
-    ? document.getElementById("timeReset").value / 60
-    : 1;
+  const timeReset = parseInt(
+    document.getElementById("timeReset").value || 1,
+    10
+  );
+  const autoReset = document.getElementById("autoReset").checked;
+  const nhamang = document.getElementById("nhamang").value;
+  const tinhthanh = document.getElementById("tinhthanh").value;
   if (!apiKey) return alert("Vui lòng nhập API key hợp lệ.");
 
-  countDown(document.getElementById("saveKey"), 60, "Xác nhận");
-  chrome.runtime.sendMessage({ type: "setApiKey", apiKey, timeReset }, () => {
-    alert("Đã lưu API key!");
+  countDown(document.getElementById("saveKey"), 60, "Kết nối");
+  chrome.runtime.sendMessage({
+    type: "setApiKey",
+    apiKey,
+    timeReset,
+    autoReset,
+    nhamang,
+    tinhthanh,
   });
+  alert("Đã lưu API key và cấu hình!");
 });
 
-document.getElementById("reloadApi").addEventListener("click", () => {
-  countDown(document.getElementById("reloadApi"), 60, "Đổi IP Chủ Động");
-  chrome.runtime.sendMessage({ type: "reloadApi" });
-});
+// document.getElementById("reloadApi").addEventListener("click", () => {
+//   countDown(document.getElementById("reloadApi"), 60, "Kết nối");
+//   chrome.runtime.sendMessage({ type: "reloadApi" });
+// });
 
-chrome.storage.local.get("apiKey", (data) => {
-  if (!data.apiKey) return;
-  document.getElementById("apiKey").value = data.apiKey;
-});
-
-chrome.storage.local.get("timeReset", (data) => {
-  if (!data.timeReset) return;
-  document.getElementById("timeReset").value = data.timeReset * 60;
-});
+chrome.storage.local.get(
+  ["apiKey", "timeReset", "autoReset", "nhamang", "tinhthanh"],
+  (data) => {
+    if (data.apiKey) document.getElementById("apiKey").value = data.apiKey;
+    if (data.timeReset)
+      document.getElementById("timeReset").value = data.timeReset;
+    if (data.autoReset !== undefined)
+      document.getElementById("autoReset").checked = data.autoReset;
+    if (data.nhamang) document.getElementById("nhamang").value = data.nhamang;
+    if (data.tinhthanh)
+      document.getElementById("tinhthanh").value = data.tinhthanh;
+  }
+);
 
 document.addEventListener("DOMContentLoaded", () => {
   chrome.runtime.sendMessage({ type: "requestProxyUpdate" });
 });
 
 chrome.runtime.onMessage.addListener((message) => {
-  console.log("Received message:", message);
   if (message.type === "proxyUpdate") {
     displayProxyInfo(message.proxy, message.waitTime);
   } else if (message.type === "error") {
@@ -42,7 +60,6 @@ chrome.runtime.onMessage.addListener((message) => {
 const countDown = (element, waitTime, textContent) => {
   element.disabled = true;
   element.classList.add("disabled");
-
   element.textContent = `Loading... ${waitTime}s`;
 
   const interval = setInterval(() => {
@@ -68,6 +85,8 @@ const displayProxyInfo = (proxy, waitTime) => {
   document.getElementById("proxyProvider").textContent = proxy["Nha Mang"];
   document.getElementById("proxyLocation").textContent = proxy["Vi Tri"];
   startCountdown(waitTime, "proxy");
+  const connectionStatus = document.getElementById("connectionStatus");
+  connectionStatus.style.display = "block";
 };
 
 const displayError = (message, waitTime) => {
@@ -78,27 +97,35 @@ const displayError = (message, waitTime) => {
 };
 
 const startCountdown = (waitTime, type) => {
-  console.log("Starting countdown with waitTime:", waitTime, "type:", type);
-  if (waitTime <= 0) {
-    document.getElementById(
-      type === "proxy" ? "proxyExpires" : "countdown"
-    ).textContent =
-      type === "proxy" ? "Đang lấy proxy mới..." : "Đang thử lại...";
-    return;
+  if (countdownIntervals[type]) {
+    clearInterval(countdownIntervals[type]);
+    countdownIntervals[type] = null;
   }
-  let timeLeft = Math.floor(waitTime / 1000);
+
   const countdownElement = document.getElementById(
     type === "proxy" ? "proxyExpires" : "countdown"
   );
+
+  if (waitTime <= 0) {
+    countdownElement.textContent =
+      type === "proxy" ? "Đang lấy proxy mới..." : "Đang thử lại...";
+    return;
+  }
+
+  let timeLeft = Math.floor(waitTime / 1000);
   countdownElement.textContent = `${timeLeft} giây`;
+
   const interval = setInterval(() => {
     timeLeft--;
     if (timeLeft <= 0) {
       clearInterval(interval);
+      countdownIntervals[type] = null;
       countdownElement.textContent =
         type === "proxy" ? "Đang lấy proxy mới..." : "Đang thử lại...";
       return;
     }
     countdownElement.textContent = `${timeLeft} giây`;
   }, 1000);
+
+  countdownIntervals[type] = interval;
 };
