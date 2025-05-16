@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Proxy Xoay</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <section class="container">
+      <h2>Proxy Xoay</h2>
+      <div id="apiKeyInput">
+        <label for="apiKey">Nhập Key và thời gian:</label>
+        <div class="input-group">
+          <input type="text" id="apiKey" placeholder="Nhập Key mua từ web" />
+          <input
+            type="number"
+            id="timeReset"
+            placeholder="Time"
+            min="60"
+            max="900"
+          />
+        </div>
+        <button id="saveKey">Xác nhận</button>
+        <button id="reloadApi">Đổi IP Chủ Động</button>
+      </div>
+      <div id="proxyInfo" style="display: none">
+        <h3>Proxy Hiện Tại</h3>
+        <p><strong>ip:port:</strong> <span id="proxyAddress"></span></p>
+        <p><strong>TK:</strong> <span id="proxyUsername"></span></p>
+        <p><strong>MK:</strong> <span id="proxyPassword"></span></p>
+        <p><strong>Nhà mạng:</strong> <span id="proxyProvider"></span></p>
+        <p><strong>Vị trí:</strong> <span id="proxyLocation"></span></p>
+        <p><strong>Hết hạn sau:</strong> <span id="proxyExpires"></span></p>
+      </div>
+      <div id="errorInfo" style="display: none">
+        <h3>Lỗi</h3>
+        <p><strong>Thông báo:</strong> <span id="errorMessage"></span></p>
+        <p><strong>Thử lại sau:</strong> <span id="countdown"></span></p>
+      </div>
+      <div id="footer">
+        <a href="https://topproxyviet.com/" target="_blank">
+          Link mua proxy xoay
+        </a>
+        <p id="copyright">
+          <span>© 2023</span>
+          <a href="https://www.facebook.com/YUNO.Team" target="_blank"
+            >YUNO TEAM</a
+          >
+        </p>
+      </div>
+    </section>
+    <script src="popup.js"></script>
+  </body>
+</html>

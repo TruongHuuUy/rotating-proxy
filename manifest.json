@@ -1,0 +1,30 @@
+{
+  "manifest_version": 3,
+  "name": "Proxy Auto Change",
+  "version": "1.1",
+  "description": "Automatically changes proxy based on API expiration time with user-defined API key for topproxyviet.com",
+  "permissions": [
+    "proxy",
+    "storage",
+    "alarms",
+    "webRequest",
+    "webRequestAuthProvider"
+  ],
+  "host_permissions": ["<all_urls>", "https://proxyxoay.org/*"],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "logo.png",
+      "48": "logo.png",
+      "128": "logo.png"
+    }
+  },
+  "icons": {
+    "16": "logo.png",
+    "48": "logo.png",
+    "128": "logo.png"
+  }
+}
