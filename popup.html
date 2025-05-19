@@ -13,21 +13,25 @@
         <label for="apiKey">Nhập Key</label>
         <input type="text" id="apiKey" placeholder="Nhập Key mua từ web" />
         <div style="margin-top: 10px">
-          <label for="timeReset">Thời gian (phút)</label>
+          <label id="label-time-reset" class="disabled" for="timeReset"
+            >Thời gian (giây)</label
+          >
           <div class="input-group">
             <div class="time-reset">
               <input
                 type="number"
                 id="timeReset"
                 placeholder="Thời gian reset"
-                min="1"
-                max="15"
-                value="1"
+                min="60"
+                max="900"
+                value="60"
+                class="disabled"
+                disabled
               />
             </div>
             <div class="auto-reset">
               <label for="autoReset">
-                <input type="checkbox" id="autoReset" checked />
+                <input type="checkbox" id="autoReset" />
                 Tự đổi IP
               </label>
             </div>
@@ -70,7 +74,7 @@
 
         <div class="button-group">
           <button id="saveKey">Kết nối</button>
-          <!-- <button id="reloadApi">Kết nối</button> -->
+          <button id="disconnectApi" style="display: none">Ngắt kết nối</button>
         </div>
       </div>
 

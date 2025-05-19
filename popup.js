@@ -5,16 +5,17 @@ const countdownIntervals = {
 
 document.getElementById("saveKey").addEventListener("click", () => {
   const apiKey = document.getElementById("apiKey").value;
+
   const timeReset = parseInt(
-    document.getElementById("timeReset").value || 1,
-    10
+    document.getElementById("timeReset").value || 60,
+    900
   );
   const autoReset = document.getElementById("autoReset").checked;
   const nhamang = document.getElementById("nhamang").value;
   const tinhthanh = document.getElementById("tinhthanh").value;
   if (!apiKey) return alert("Vui lòng nhập API key hợp lệ.");
 
-  countDown(document.getElementById("saveKey"), 60, "Kết nối");
+  // countDown(document.getElementById("saveKey"), 60, "Kết nối");
   chrome.runtime.sendMessage({
     type: "setApiKey",
     apiKey,
@@ -24,24 +25,113 @@ document.getElementById("saveKey").addEventListener("click", () => {
     tinhthanh,
   });
   alert("Đã lưu API key và cấu hình!");
+
+  if (autoReset) {
+    statusButton("checked");
+  } else {
+    statusButton("non-checked");
+  }
+});
+document.getElementById("disconnectApi").addEventListener("click", () => {
+  chrome.runtime.sendMessage({ type: "disconnectProxy" }, () => {
+    // Xóa dữ liệu hiển thị trên popup
+    document.getElementById("proxyInfo").style.display = "none";
+    document.getElementById("errorInfo").style.display = "none";
+    document.getElementById("saveKey").style.display = "";
+    document.getElementById("disconnectApi").style.display = "none";
+
+    statusButton("default");
+    alert("Đã ngắt kết nối proxy thành công!");
+  });
 });
 
-// document.getElementById("reloadApi").addEventListener("click", () => {
-//   countDown(document.getElementById("reloadApi"), 60, "Kết nối");
-//   chrome.runtime.sendMessage({ type: "reloadApi" });
-// });
+document.getElementById("autoReset").addEventListener("click", () => {
+  const elLabelTimeReset = document.getElementById("label-time-reset");
+  const elTimeReset = document.getElementById("timeReset");
+  const elAutoReset = document.getElementById("autoReset");
+
+  if (elAutoReset.checked) {
+    elTimeReset.disabled = false;
+    elTimeReset.classList.remove("disabled");
+    elLabelTimeReset.classList.remove("disabled");
+  } else {
+    elTimeReset.disabled = true;
+    elTimeReset.classList.add("disabled");
+    elLabelTimeReset.classList.add("disabled");
+  }
+
+  checkEditForm("autoReset", elAutoReset.checked);
+});
+
+document.getElementById("apiKey").addEventListener("input", () => {
+  const value = document.getElementById("apiKey").value;
+  checkEditForm("apiKey", value);
+});
+
+document.getElementById("timeReset").addEventListener("input", () => {
+  const value = document.getElementById("timeReset").value;
+  checkEditForm("timeReset", value);
+});
+
+document.getElementById("nhamang").addEventListener("input", () => {
+  const value = document.getElementById("nhamang").value;
+  checkEditForm("nhamang", value);
+});
+
+document.getElementById("tinhthanh").addEventListener("input", () => {
+  const value = document.getElementById("tinhthanh").value;
+  checkEditForm("tinhthanh", value);
+});
+
+const checkEditForm = (key, value) => {
+  const elAutoReset = document.getElementById("autoReset");
+  chrome.storage.local.get(key).then((data) => {
+    if (data[key] !== value) return statusButton("new");
+    if (!elAutoReset.checked) return statusButton("non-checked");
+    statusButton("checked");
+  });
+};
 
 chrome.storage.local.get(
   ["apiKey", "timeReset", "autoReset", "nhamang", "tinhthanh"],
   (data) => {
-    if (data.apiKey) document.getElementById("apiKey").value = data.apiKey;
-    if (data.timeReset)
-      document.getElementById("timeReset").value = data.timeReset;
-    if (data.autoReset !== undefined)
-      document.getElementById("autoReset").checked = data.autoReset;
-    if (data.nhamang) document.getElementById("nhamang").value = data.nhamang;
-    if (data.tinhthanh)
-      document.getElementById("tinhthanh").value = data.tinhthanh;
+    const elSaveKey = document.getElementById("saveKey");
+    const elDisconnect = document.getElementById("disconnectApi");
+
+    const elApiKey = document.getElementById("apiKey");
+    const elAutoReset = document.getElementById("autoReset");
+    const elLabelTimeReset = document.getElementById("label-time-reset");
+    const elTimeReset = document.getElementById("timeReset");
+    const elNhaMang = document.getElementById("nhamang");
+    const elTinhThanh = document.getElementById("tinhthanh");
+    if (
+      !data.apiKey &&
+      !data.timeReset &&
+      !data.autoReset &&
+      !data.nhamang &&
+      !data.tinhthanh
+    ) {
+      statusButton("default");
+      return;
+    }
+
+    const apiKey = data.apiKey;
+    const nhamang = data.nhamang;
+    const tinhthanh = data.tinhthanh;
+    const autoReset = data.autoReset;
+    const timeReset = data.timeReset;
+
+    if (!autoReset && apiKey) {
+      statusButton("non-checked");
+    }
+    if (autoReset && apiKey) {
+      statusButton("checked");
+    }
+    if (apiKey) elApiKey.value = apiKey;
+    if (timeReset) elTimeReset.value = timeReset * 60;
+    if (autoReset !== undefined) elAutoReset.checked = autoReset;
+    if (nhamang) elNhaMang.value = nhamang;
+    if (tinhthanh) elTinhThanh.value = tinhthanh;
   }
 );
 
@@ -129,3 +219,39 @@ const startCountdown = (waitTime, type) => {
 
   countdownIntervals[type] = interval;
 };
+
+const statusButton = (status) => {
+  const elDisconnect = document.getElementById("disconnectApi");
+  const elSaveKey = document.getElementById("saveKey");
+  const elLabelTimeReset = document.getElementById("label-time-reset");
+  const elTimeReset = document.getElementById("timeReset");
+
+  switch (status) {
+    case "non-checked":
+      elSaveKey.textContent = "Đổi IP";
+      elSaveKey.style.display = "block";
+      elDisconnect.style.display = "block";
+      break;
+    case "checked":
+      elTimeReset.disabled = false;
+      elTimeReset.classList.remove("disabled");
+      elLabelTimeReset.classList.remove("disabled");
+      elSaveKey.style.display = "none";
+      elDisconnect.style.display = "block";
+      break;
+
+    case "new":
+      elSaveKey.textContent = "Kết nối mới";
+      elSaveKey.style.display = "block";
+      elDisconnect.style.display = "none";
+      break;
+
+    default:
+      elSaveKey.textContent = "Kết nối";
+      elSaveKey.style.display = "block";
+      elDisconnect.style.display = "none";
+      break;
+  }
+};
+
+const checkLocalStorage = () => {};

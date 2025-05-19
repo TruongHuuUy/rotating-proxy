@@ -45,6 +45,11 @@ label {
   color: #cccccc;
   margin-bottom: 5px;
   display: block;
+  &.disabled {
+    color: rgb(198, 201, 201);
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
 }
 
 #apiKeyInput {
@@ -110,6 +115,13 @@ select {
   border-radius: 6px;
   outline: none;
   transition: border-color 0.3s, box-shadow 0.3s;
+  &:disabled,
+  .disabled {
+    border-color: rgb(148, 178, 183);
+    color: rgb(198, 201, 201);
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
 }
 
 select {
@@ -144,6 +156,11 @@ button {
   transition: background-color 0.3s, transform 0.2s;
   flex: 1;
   margin-top: 10px;
+}
+
+#disconnectApi {
+  background-color: #ff0000;
+  color: rgb(255, 255, 255);
 }
 
 button:hover {
@@ -227,6 +244,7 @@ a:hover {
 #copyright {
   display: flex;
   justify-content: center;
+  align-items: center;
   gap: 5px;
   font-size: 12px;
   color: #555;

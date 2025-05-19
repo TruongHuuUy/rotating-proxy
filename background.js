@@ -1,11 +1,15 @@
+chrome.storage.local.get("autoReset").then(({ autoReset }) => {
+  if (autoReset) getProxy();
+});
+
 const checkProxyStatus = async () => {
   try {
-    await chrome.proxy.settings.clear({ scope: "regular" });
     const response = await fetch("https://api.ipify.org", {
       signal: AbortSignal.timeout(5000),
     });
     if (!response.ok) throw new Error("Proxy check failed");
-    // console.log("Proxy is active");
+    const ip = await response.text();
+    console.log("Proxy IP hiện tại:", ip);
     return true;
   } catch (error) {
     console.error("Proxy check failed:", error.message);
@@ -23,6 +27,7 @@ const getProxy = async () => {
       "nhamang",
       "tinhthanh",
     ]);
+
   if (!apiKey) {
     chrome.runtime.sendMessage({
       type: "error",
@@ -41,7 +46,7 @@ const getProxy = async () => {
       { signal: AbortSignal.timeout(10000) }
     );
     const data = await response.json();
-    // console.log("API response:", data);
+
     if (data.status === 100) {
       setProxy(data.proxyhttp);
       const expirationTime = parseInt(data.message.match(/\d+/)[0], 10) * 1000;
@@ -59,12 +64,11 @@ const getProxy = async () => {
         delayInMinutes: expirationTime / 60000,
       });
       chrome.alarms.create("checkProxy", { periodInMinutes: 1 });
+
       if (autoReset) {
         const resetMinutes =
           Number.isFinite(timeReset) && timeReset > 0 ? timeReset : 1;
         chrome.alarms.create("timeReset", { periodInMinutes: resetMinutes });
-      } else {
-        console.log("Auto reset disabled, skipping timeReset alarm");
       }
     } else {
       const waitTimeMatch = data.message.match(/(\d+)/);
@@ -130,60 +134,38 @@ const setProxy = (proxyString) => {
   );
 };
 
-getProxy();
+// ✅ Định nghĩa alarm handlers
+const alarmHandlers = {
+  updateProxy: getProxy,
+  retryProxy: getProxy,
+  timeReset: getProxy,
+  checkProxy: () =>
+    checkProxyStatus().then((isActive) => {
+      if (!isActive) getProxy();
+    }),
+};
 
 chrome.alarms.onAlarm.addListener((alarm) => {
-  switch (alarm.name) {
-    case "updateProxy":
-      getProxy();
-      break;
-    case "retryProxy":
-      getProxy();
-      break;
-    case "timeReset":
-      getProxy();
-      break;
-    case "checkProxy":
-      checkProxyStatus().then((isActive) => {
-        if (!isActive) {
-          getProxy();
-        }
-      });
-      break;
-    default:
-      console.log("Unknown alarm:", alarm.name);
-      break;
-  }
+  const handler = alarmHandlers[alarm.name];
+  if (handler) return handler();
+  console.log("Unknown alarm:", alarm.name);
 });
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.type === "setApiKey") {
-    // console.log("Received setApiKey message:", message);
+    clearAlarms();
     chrome.storage.local.set(
       {
         apiKey: message.apiKey,
-        timeReset: message.timeReset,
+        timeReset: message.timeReset / 60,
         autoReset: message.autoReset,
         nhamang: message.nhamang,
         tinhthanh: message.tinhthanh,
       },
       () => {
-        // console.log(
-        //   "Đã lưu API key:",
-        //   message.apiKey,
-        //   "timeReset:",
-        //   message.timeReset,
-        //   "autoReset:",
-        //   message.autoReset,
-        //   "nhamang:",
-        //   message.nhamang,
-        //   "tinhthanh:",
-        //   message.tinhthanh
-        // );
         getProxy();
       }
     );
-    // Gửi phản hồi để tránh lỗi message port closed (dù không bắt buộc)
     sendResponse({ status: "ok" });
   } else if (message.type === "requestProxyUpdate") {
     chrome.storage.local.get(
@@ -219,5 +201,23 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     console.log("Received reloadApi message");
     getProxy();
     sendResponse({ status: "ok" });
+  } else if (message.type === "disconnectProxy") {
+    chrome.proxy.settings.clear({ scope: "regular" }, () => {
+      chrome.alarms.clearAll();
+      chrome.storage.local.remove([
+        "currentProxy",
+        "currentError",
+        "expirationTimestamp",
+      ]);
+      sendResponse({ status: "disconnected" });
+    });
+    return true;
   }
 });
+
+const clearAlarms = () => {
+  chrome.alarms.clear("updateProxy");
+  chrome.alarms.clear("retryProxy");
+  chrome.alarms.clear("timeReset");
+  chrome.alarms.clear("checkProxy");
+};
