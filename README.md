@@ -81,7 +81,7 @@ GET https://proxyxoay.org/api/get.php?key=<API_KEY>&nhamang=random&tinhthanh=0
 | Momo QR | Buy Me a Coffee QR |
 |**0943 704 750**|
 |--------|---------------------|
-| ![Momo QR](https://yourdomain.com/qrcode-momo.png) |
+| ![Momo QR]([https://yourdomain.com/qrcode-momo.png](https://ibb.co/nNwcLQnM)) |
 
 - Momo: **0943 704 750**
 - ACB: **Trương Hữu Uy – 1614557**
