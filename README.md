@@ -78,10 +78,9 @@ GET https://proxyxoay.org/api/get.php?key=<API_KEY>&nhamang=random&tinhthanh=0
 **VN:** Nếu bạn thấy extension này hữu ích và muốn ủng hộ mình:
 **EN:** If this extension helped you, feel free to support me:
 
-| Momo QR | Buy Me a Coffee QR |
-|**0943 704 750**|
-|--------|---------------------|
-| ![Momo QR]([https://yourdomain.com/qrcode-momo.png](https://ibb.co/nNwcLQnM)) |
+| Momo QR                      | Ngân Hàng                  |
+| ---------------------------- | -------------------------- |
+| ![Momo QR](assets/momo.jpeg) | ![ACB QR](assets/ACB.jpeg) |
 
 - Momo: **0943 704 750**
 - ACB: **Trương Hữu Uy – 1614557**
