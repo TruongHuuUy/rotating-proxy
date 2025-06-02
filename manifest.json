@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "YUNO - Proxy Auto Change",
-  "version": "1.1",
+  "version": "2.0",
   "description": "Automatically changes proxy based on API expiration time with user-defined API key for topproxyviet.com",
   "permissions": [
     "proxy",

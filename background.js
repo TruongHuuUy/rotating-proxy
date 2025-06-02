@@ -12,13 +12,15 @@ const checkProxyStatus = async () => {
     console.log("Proxy IP hiện tại:", ip);
     return true;
   } catch (error) {
-    console.error("Proxy check failed:", error.message);
+    console.error("Proxy check failed:", error);
     return false;
   }
 };
 
 const getProxy = async () => {
-  console.log("Tool Proxy Xoay được phát triển bởi YUNO TEAM");
+  console.log("Hướng dẫn sử dụng");
+  console.log("https://github.com/TruongHuuUy/rotating-proxy");
+
   const { apiKey, timeReset, autoReset, nhamang, tinhthanh } =
     await chrome.storage.local.get([
       "apiKey",
@@ -102,8 +104,33 @@ const getProxy = async () => {
   }
 };
 
+const authListener = (details, callbackFn) => {
+  chrome.storage.local.get("currentProxy", (data) => {
+    if (!data.currentProxy) return callbackFn({});
+
+    const [_, __, username, password] = data.currentProxy.proxyhttp.split(":");
+    callbackFn({
+      authCredentials: { username, password },
+    });
+  });
+};
+
 const setProxy = (proxyString) => {
   const [ip, port, username, password] = proxyString.split(":");
+
+  // ✅ Remove listener cũ nếu có (tránh trùng hoặc gọi nhiều lần)
+  try {
+    chrome.webRequest.onAuthRequired.removeListener(authListener);
+  } catch (e) {}
+
+  if (username && password) {
+    chrome.webRequest.onAuthRequired.addListener(
+      authListener,
+      { urls: ["<all_urls>"] },
+      ["asyncBlocking"]
+    );
+  }
+
   const proxyConfig = {
     mode: "fixed_servers",
     rules: {
@@ -121,15 +148,7 @@ const setProxy = (proxyString) => {
       scope: "regular",
     },
     () => {
-      chrome.webRequest.onAuthRequired.addListener(
-        (details, callbackFn) => {
-          callbackFn({
-            authCredentials: { username, password },
-          });
-        },
-        { urls: ["<all_urls>"] },
-        ["asyncBlocking"]
-      );
+      console.log("✅ Proxy đã được cấu hình:", ip);
     }
   );
 };
@@ -161,6 +180,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         autoReset: message.autoReset,
         nhamang: message.nhamang,
         tinhthanh: message.tinhthanh,
+        usingStaticProxy: false,
       },
       () => {
         getProxy();
@@ -198,7 +218,6 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     );
     sendResponse({ status: "ok" });
   } else if (message.type === "reloadApi") {
-    console.log("Received reloadApi message");
     getProxy();
     sendResponse({ status: "ok" });
   } else if (message.type === "disconnectProxy") {
@@ -212,6 +231,66 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       sendResponse({ status: "disconnected" });
     });
     return true;
+  } else if (message.type === "setStaticProxy") {
+    const [ip, port, username, password] = message.proxy.split(":");
+
+    const proxyConfig = {
+      mode: "fixed_servers",
+      rules: {
+        singleProxy: {
+          scheme: "http",
+          host: ip,
+          port: parseInt(port),
+        },
+      },
+    };
+
+    chrome.proxy.settings.set(
+      {
+        value: proxyConfig,
+        scope: "regular",
+      },
+      () => {
+        if (username && password) {
+          chrome.webRequest.onAuthRequired.addListener(
+            (details, callbackFn) => {
+              callbackFn({
+                authCredentials: { username, password },
+              });
+            },
+            { urls: ["<all_urls>"] },
+            ["asyncBlocking"]
+          );
+        }
+
+        chrome.storage.local.set({
+          staticProxy: message.proxy,
+          usingStaticProxy: true,
+        });
+
+        clearAlarms();
+      }
+    );
+  } else if (message.type === "disconnectStaticProxy") {
+    chrome.proxy.settings.clear({ scope: "regular" }, () => {
+      chrome.storage.local.remove(["staticProxy", "usingStaticProxy"]);
+      chrome.webRequest.onAuthRequired.removeListener(() => {});
+      sendResponse({ status: "static_disconnected" });
+    });
+    return true;
+  } else if (message.type === "restartPopup") {
+    chrome.action.getPopup({}, (popupUrl) => {
+      if (popupUrl) {
+        chrome.windows.create({
+          url: chrome.runtime.getURL(popupUrl),
+          type: "popup",
+          width: 380,
+          height: 580, // hoặc chiều cao bạn mong muốn
+        });
+      }
+    });
+    sendResponse({ status: "ok" });
+    return true; // 🔁 Giữ kết nối nếu async
   }
 });
 
@@ -221,3 +300,39 @@ const clearAlarms = () => {
   chrome.alarms.clear("timeReset");
   chrome.alarms.clear("checkProxy");
 };
+
+chrome.runtime.onStartup.addListener(() => {
+  chrome.storage.local.get("usingStaticProxy", (data) => {
+    if (data.usingStaticProxy) {
+      chrome.storage.local.get("staticProxy", (data) => {
+        const [ip, port, username, password] = data.staticProxy.split(":");
+        const proxyConfig = {
+          mode: "fixed_servers",
+          rules: {
+            singleProxy: {
+              scheme: "http",
+              host: ip,
+              port: parseInt(port),
+            },
+          },
+        };
+        chrome.proxy.settings.set(
+          { value: proxyConfig, scope: "regular" },
+          () => {
+            if (username && password) {
+              chrome.webRequest.onAuthRequired.addListener(
+                (details, callbackFn) => {
+                  callbackFn({
+                    authCredentials: { username, password },
+                  });
+                },
+                { urls: ["<all_urls>"] },
+                ["asyncBlocking"]
+              );
+            }
+          }
+        );
+      });
+    }
+  });
+});

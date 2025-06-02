@@ -8,8 +8,8 @@ body {
   width: 320px;
   padding: 15px;
   font-family: "Roboto", Arial, sans-serif;
-  background-color: #0a0d14;
-  color: #e5e7eb;
+  background-color: #0a0f1c; /* nền đồng bộ với logo */
+  color: #ffffff;
 }
 
 .container {
@@ -26,53 +26,50 @@ body {
   margin: 0 auto;
   display: block;
   border-radius: 50%;
-  background-color: #0a0d14;
-  border: 2px solid #00e0ff;
+  background-color: #0a0f1c;
+  border: 2px solid #00e6ff;
   padding: 5px;
-  box-shadow: 0 0 12px rgba(0, 224, 255, 0.5);
+  box-shadow: 0 0 10px rgba(0, 230, 255, 0.3);
 }
 
 h2 {
   font-size: 20px;
   font-weight: 700;
-  color: #00e0ff;
+  color: #00e6ff;
   text-align: center;
 }
 
 label {
   font-size: 14px;
   font-weight: 700;
-  color: #cccccc;
+  color: #99cbd9;
   margin-bottom: 5px;
   display: block;
-  &.disabled {
-    color: rgb(198, 201, 201);
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
+}
+
+label.disabled {
+  color: #607d8b;
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 #apiKeyInput {
   display: flex;
   flex-direction: column;
   width: 100%;
-  border-bottom: 1px solid #00e0ff;
+  border-bottom: 1px solid #00e6ff;
   padding-bottom: 15px;
 }
 
-.input-group {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  align-items: center;
-  margin-top: 5px;
-}
-
+.input-group,
 .select-group {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
   align-items: center;
+}
+
+.select-group {
   margin-top: 10px;
 }
 
@@ -94,12 +91,13 @@ label {
   gap: 8px;
   font-size: 13px;
   font-weight: 400;
+  color: #99cbd9;
 }
 
 input[type="checkbox"] {
   width: 16px;
   height: 16px;
-  accent-color: #00e0ff;
+  accent-color: #00e6ff;
   cursor: pointer;
 }
 
@@ -109,62 +107,60 @@ select {
   width: 100%;
   padding: 8px 12px;
   font-size: 14px;
-  border: 1px solid #00e0ff;
-  background-color: #1c1f26;
-  color: #fff;
+  border: 1px solid #00e6ff;
+  background-color: #131a2a;
+  color: #ffffff;
   border-radius: 6px;
   outline: none;
   transition: border-color 0.3s, box-shadow 0.3s;
-  &:disabled,
-  .disabled {
-    border-color: rgb(148, 178, 183);
-    color: rgb(198, 201, 201);
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
+}
+
+input[type="text"]:disabled,
+input[type="number"]:disabled,
+select:disabled {
+  border-color: #33404f;
+  color: #7a8a99;
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 select {
   cursor: pointer;
   appearance: none;
-  background-image: url('data:image/svg+xml;utf8,<svg fill="%2300e0ff" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>');
+  background-image: url("data:image/svg+xml;utf8,<svg fill='%2300e6ff' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
   background-repeat: no-repeat;
   background-position: right 8px center;
+  background-color: #131a2a;
 }
 
 input:focus,
 select:focus {
-  border-color: #00e0ff;
-  box-shadow: 0 0 0 3px rgba(0, 224, 255, 0.2);
+  border-color: #00e6ff;
+  box-shadow: 0 0 0 3px rgba(0, 230, 255, 0.2);
 }
 
 .button-group {
   display: flex;
   gap: 10px;
   width: 100%;
+  margin-top: 10px;
 }
 
 button {
   padding: 10px;
   font-size: 14px;
   font-weight: 500;
-  color: #0a0d14;
-  background-color: #00e0ff;
+  color: #0a0f1c;
+  background-color: #00e6ff;
   border: none;
   border-radius: 6px;
   cursor: pointer;
   transition: background-color 0.3s, transform 0.2s;
   flex: 1;
-  margin-top: 10px;
-}
-
-#disconnectApi {
-  background-color: #ff0000;
-  color: rgb(255, 255, 255);
 }
 
 button:hover {
-  background-color: #00b8d4;
+  background-color: #00c3d6;
   transform: translateY(-1px);
 }
 
@@ -174,26 +170,33 @@ button:active {
 
 button:disabled,
 button.disabled {
-  background-color: #cccccc;
+  background-color: #33404f;
   opacity: 0.5;
   cursor: not-allowed;
   transform: none;
 }
 
+button.danger,
+#disconnectApi {
+  background-color: #d63031;
+  color: white;
+}
+
 #proxyInfo,
 #errorInfo {
-  background-color: #1c1f26;
+  background-color: #131a2a;
   padding: 12px;
   border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
   width: 100%;
+  color: #ffffff;
 }
 
 #proxyInfo h3,
 #errorInfo h3 {
   font-size: 16px;
   font-weight: 600;
-  color: #00e0ff;
+  color: #00e6ff;
   margin-bottom: 8px;
 }
 
@@ -205,21 +208,20 @@ button.disabled {
 
 #proxyInfo p strong,
 #errorInfo p strong {
-  color: #e5e7eb;
+  color: #ffffff;
   font-weight: 500;
 }
 
-#proxyInfo span,
-#errorInfo span {
-  color: #b0bec5;
+#proxyInfo span {
+  color: #99cbd9;
 }
 
 #errorInfo {
-  border-left: 4px solid #e63946;
+  border-left: 4px solid #d63031;
 }
 
 #errorInfo span {
-  color: #e63946;
+  color: #d63031;
 }
 
 #footer {
@@ -231,13 +233,13 @@ button.disabled {
 
 a {
   font-size: 13px;
-  color: #00e0ff;
+  color: #00e6ff;
   text-decoration: none;
   transition: color 0.3s;
 }
 
 a:hover {
-  color: #00b8d4;
+  color: #ffffff;
   text-decoration: underline;
 }
 
@@ -247,10 +249,55 @@ a:hover {
   align-items: center;
   gap: 5px;
   font-size: 12px;
-  color: #555;
+  color: #7a8a99;
   margin-top: 5px;
 }
 
 #copyright a {
-  color: #00e0ff;
+  color: #00e6ff;
+}
+
+#statusMessage {
+  text-align: center;
+  margin-top: 10px;
+  display: none;
+  font-size: 13px;
+  color: #00cc66;
+}
+
+.tab-buttons {
+  display: flex;
+  width: 100%;
+  gap: 5px;
+}
+
+.tab-button {
+  flex: 1;
+  padding: 8px 0;
+  font-weight: 600;
+  background-color: #1e2a3a;
+  border: none;
+  border-radius: 6px;
+  color: #00e6ff;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.tab-button:hover {
+  background-color: #00e6ff;
+  color: #0a0f1c;
+}
+
+.tab-button.active {
+  background-color: #00e6ff;
+  color: #0a0f1c;
+}
+
+.tab-content {
+  display: none;
+}
+
+.tab-content.active {
+  display: block;
+  width: 100%;
 }

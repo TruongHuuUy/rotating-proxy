@@ -3,80 +3,106 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>YUNO TEAM - Proxy Xoay</title>
+    <title>Proxy Xoay VN 1.0</title>
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
     <section class="container">
-      <h2>Proxy Xoay</h2>
-      <div id="apiKeyInput">
-        <label for="apiKey">Nhập Key</label>
-        <input type="text" id="apiKey" placeholder="Nhập Key mua từ web" />
-        <div style="margin-top: 10px">
-          <label id="label-time-reset" class="disabled" for="timeReset"
-            >Thời gian (giây)</label
-          >
-          <div class="input-group">
-            <div class="time-reset">
-              <input
-                type="number"
-                id="timeReset"
-                placeholder="Thời gian reset"
-                min="60"
-                max="900"
-                value="60"
-                class="disabled"
-                disabled
-              />
-            </div>
-            <div class="auto-reset">
-              <label for="autoReset">
-                <input type="checkbox" id="autoReset" />
-                Tự đổi IP
-              </label>
-            </div>
-          </div>
-        </div>
+      <h2>Proxy Xoay VN 1.0</h2>
+      <!-- Tab buttons -->
+      <div class="tab-buttons">
+        <button class="tab-button active" data-tab="dynamic">Proxy Xoay</button>
+        <button class="tab-button" data-tab="static">Proxy Tĩnh</button>
+      </div>
 
-        <div class="select-group">
-          <div class="network">
-            <label for="nhamang">Nhà mạng</label>
-            <select id="nhamang">
-              <option value="random" selected>Random</option>
-              <option value="viettel">Viettel</option>
-              <option value="fpt">FPT</option>
-              <option value="vnpt">VNPT</option>
-            </select>
+      <div id="tab-dynamic" class="tab-content active">
+        <div id="apiKeyInput" class="tab-content active">
+          <label for="apiKey">Nhập Key</label>
+          <input type="text" id="apiKey" placeholder="Nhập Key mua từ web" />
+          <div style="margin-top: 10px">
+            <label id="label-time-reset" for="timeReset"
+              >Thời gian (giây)</label
+            >
+            <div class="input-group">
+              <div class="time-reset">
+                <input
+                  type="number"
+                  id="timeReset"
+                  placeholder="Thời gian reset"
+                  min="60"
+                  max="900"
+                  value="60"
+                />
+              </div>
+              <div class="auto-reset">
+                <label for="autoReset">
+                  <input type="checkbox" id="autoReset" checked />
+                  Tự động đổi IP
+                </label>
+              </div>
+            </div>
           </div>
-          <div class="location">
-            <label for="tinhthanh">Tỉnh thành</label>
-            <select id="tinhthanh">
-              <option value="0" selected>Random</option>
-              <option value="1">Phú Thọ</option>
-              <option value="2">Tuyên quang</option>
-              <option value="3">Hà Nội</option>
-              <option value="4">Hải Dương</option>
-              <option value="5">Bắc Giang</option>
-              <option value="6">Hồ Chí Minh</option>
-              <option value="7">Tây Ninh</option>
-              <option value="8">Đồng Nai</option>
-              <option value="9">Vũng Tàu</option>
-              <option value="10">Bình Dương</option>
-              <option value="11">Nghệ An</option>
-              <option value="12">Hà Tĩnh</option>
-              <option value="13">Quảng Bình</option>
-              <option value="14">Quảng Trị</option>
-              <option value="15">Huế</option>
-              <option value="16">Đà Nẵng</option>
-              <option value="17">Vĩnh Phúc</option>
-            </select>
+
+          <div class="select-group">
+            <div class="network">
+              <label for="nhamang">Nhà mạng</label>
+              <select id="nhamang">
+                <option value="random" selected>Random</option>
+                <option value="viettel">Viettel</option>
+                <option value="fpt">FPT</option>
+                <option value="vnpt">VNPT</option>
+              </select>
+            </div>
+            <div class="location">
+              <label for="tinhthanh">Tỉnh thành</label>
+              <select id="tinhthanh">
+                <option value="0" selected>Random</option>
+                <option value="1">Phú Thọ</option>
+                <option value="2">Tuyên quang</option>
+                <option value="3">Hà Nội</option>
+                <option value="4">Hải Dương</option>
+                <option value="5">Bắc Giang</option>
+                <option value="6">Hồ Chí Minh</option>
+                <option value="7">Tây Ninh</option>
+                <option value="8">Đồng Nai</option>
+                <option value="9">Vũng Tàu</option>
+                <option value="10">Bình Dương</option>
+                <option value="11">Nghệ An</option>
+                <option value="12">Hà Tĩnh</option>
+                <option value="13">Quảng Bình</option>
+                <option value="14">Quảng Trị</option>
+                <option value="15">Huế</option>
+                <option value="16">Đà Nẵng</option>
+                <option value="17">Vĩnh Phúc</option>
+              </select>
+            </div>
           </div>
+
+          <div class="button-group">
+            <button id="saveKey">Kết nối</button>
+            <button id="disconnectApi" style="display: none">
+              Ngắt kết nối
+            </button>
+          </div>
+          <div id="statusMessage"></div>
         </div>
+      </div>
+
+      <div id="tab-static" class="tab-content">
+        <label for="staticProxy">Nhập ip:port:user:pass (ip:port)</label>
+        <input type="text" id="staticProxy" />
 
         <div class="button-group">
-          <button id="saveKey">Kết nối</button>
-          <button id="disconnectApi" style="display: none">Ngắt kết nối</button>
+          <button id="saveStaticProxy">Kết nối</button>
+          <button id="disconnectStaticProxy" style="display: none">
+            Ngắt kết nối
+          </button>
         </div>
+
+        <div
+          id="staticStatusMessage"
+          style="display: none; text-align: center; margin-top: 10px"
+        ></div>
       </div>
 
       <div id="proxyInfo" style="display: none">
@@ -87,30 +113,12 @@
         <p><strong>Nhà mạng:</strong> <span id="proxyProvider"></span></p>
         <p><strong>Vị trí:</strong> <span id="proxyLocation"></span></p>
         <p><strong>Hết hạn sau:</strong> <span id="proxyExpires"></span></p>
-        <p
-          id="connectionStatus"
-          style="display: none; color: #28a745; font-size: 12px"
-        >
-          Đã kết nối thành công
-        </p>
       </div>
 
       <div id="errorInfo" style="display: none">
         <h3>Lỗi</h3>
         <p><strong>Thông báo:</strong> <span id="errorMessage"></span></p>
         <p><strong>Thử lại sau:</strong> <span id="countdown"></span></p>
-      </div>
-
-      <div id="footer">
-        <a href="https://topproxyviet.com/" target="_blank">
-          Link mua proxy xoay
-        </a>
-        <p id="copyright">
-          <span>© 2025 design by</span>
-          <a href="https://www.facebook.com/YUNO.Team" target="_blank"
-            >YUNO TEAM</a
-          >
-        </p>
       </div>
     </section>
     <script src="popup.js"></script>

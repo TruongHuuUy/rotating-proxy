@@ -1,11 +1,15 @@
 # 🛡️ Proxy Xoay by YUNO TEAM
 
-**VN:** Tiện ích mở rộng Chrome hỗ trợ fake IP tự động bằng proxy xoay – được xây dựng dành riêng cho các nhu cầu: seeding, automation, crawl, chạy nhiều tài khoản...  
-**EN:** Chrome extension for automatic rotating proxy IP – tailored for seeding, automation, crawling, and managing multiple accounts.
+**VN:** Tiện ích mở rộng Chrome hỗ trợ fake IP tự động bằng proxy xoay và **proxy tĩnh** – được xây dựng dành riêng cho các nhu cầu: seeding, automation, crawl, chạy nhiều tài khoản...  
+**EN:** Chrome extension for automatic rotating proxy IP and **static proxy** – tailored for seeding, automation, crawling, and managing multiple accounts.
 
 ---
 
 ## ⚙️ Tính năng nổi bật | Features
+
+- 📌  
+  **VN:** Hỗ trợ **proxy tĩnh** trong Phase 2.0 – cho phép duy trì 1 IP cố định nếu cần  
+  **EN:** Support for **static proxy** in Phase 2.0 – allows using a fixed IP if needed
 
 - 🔁  
   **VN:** Tự động đổi IP sau một khoảng thời gian nhất định (`autoReset`)  
@@ -99,8 +103,8 @@ GET https://proxyxoay.org/api/get.php?key=<API_KEY>&nhamang=random&tinhthanh=0
 | ---------------------------- | -------------------------- |
 | ![Momo QR](assets/momo.jpeg) | ![ACB QR](assets/ACB.jpeg) |
 
-- Momo: **0943 704 750**  
-- ACB: **Trương Hữu Uy – 1614557**  
+- Momo: **0943 704 750**
+- ACB: **Trương Hữu Uy – 1614557**
 - [☕ Mua cà phê cho tôi | Buy me a coffee](https://buymeacoffee.com/huuuy)
 
 🌟 **VN:** Cảm ơn bạn rất nhiều!  
@@ -110,7 +114,7 @@ GET https://proxyxoay.org/api/get.php?key=<API_KEY>&nhamang=random&tinhthanh=0
 
 ## 📬 Liên hệ | Contact
 
-- 🌐 Website: [https://topproxyviet.com/](https://topproxyviet.com/)  
-- 💬 Telegram Dev: [@huuuy1801](https://t.me/+oAuoVznXOhYwOGNl)  
-- 💬 FaceBook Team: [YUNO TEAM](https://www.facebook.com/YUNO.Team)  
+- 🌐 Website: [https://topproxyviet.com/](https://topproxyviet.com/)
+- 💬 Telegram Dev: [@huuuy1801](https://t.me/+oAuoVznXOhYwOGNl)
+- 💬 FaceBook Team: [YUNO TEAM](https://www.facebook.com/YUNO.Team)
 - 🎥 Youtube Team: [YUNO TEAM](https://www.youtube.com/@YUNO-Team)
