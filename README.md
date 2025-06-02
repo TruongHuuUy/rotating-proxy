@@ -49,7 +49,7 @@
 
    ```bash
    git clone https://github.com/TruongHuuUy/rotating-proxy.git
-
+   ```
 
 1. **VN:** Clone dự án về máy:  
    **EN:** Clone the project to your machine:
