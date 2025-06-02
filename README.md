@@ -1,15 +1,15 @@
 # 🛡️ Proxy Xoay by YUNO TEAM
 
-**VN:** Tiện ích mở rộng Chrome hỗ trợ fake IP tự động bằng proxy xoay và **proxy tĩnh** – được xây dựng dành riêng cho các nhu cầu: seeding, automation, crawl, chạy nhiều tài khoản...  
-**EN:** Chrome extension for automatic rotating proxy IP and **static proxy** – tailored for seeding, automation, crawling, and managing multiple accounts.
+**VN:** Tiện ích mở rộng Chrome hỗ trợ fake IP tự động bằng **Proxy Xoay** và **Proxy Tĩnh** – được xây dựng dành riêng cho các nhu cầu: seeding, automation, crawl, chạy nhiều tài khoản...  
+**EN:** Chrome extension for automatic **Rotating Proxy** IP and **static proxy** – tailored for seeding, automation, crawling, and managing multiple accounts.
 
 ---
 
 ## ⚙️ Tính năng nổi bật | Features
 
 - 📌  
-  **VN:** Hỗ trợ **proxy tĩnh** trong Phase 2.0 – cho phép duy trì 1 IP cố định nếu cần  
-  **EN:** Support for **static proxy** in Phase 2.0 – allows using a fixed IP if needed
+  **VN:** Hỗ trợ **Proxy Tĩnh** trong Phase 2.0 – cho phép duy trì 1 IP cố định nếu cần  
+  **EN:** Support for **Static Proxy** in Phase 2.0 – allows using a fixed IP if needed
 
 - 🔁  
   **VN:** Tự động đổi IP sau một khoảng thời gian nhất định (`autoReset`)  
@@ -32,7 +32,7 @@
   **EN:** IP anonymity – supports `ip:port:user:pass` format
 
 - 🧠  
-  **VN:** Sử dụng proxy theo nhà mạng và tỉnh thành  
+  **VN:** Sử dụng proxy theo nhà mạng (VT, FPT, VNPT) và tỉnh thành  
   **EN:** Use proxy by mobile carrier and region
 
 ---
