@@ -37,7 +37,19 @@
 
 ---
 
+### ⬇️ Tải nhanh | Direct Download
+
+[📥 Bấm để tải ZIP](https://github.com/TruongHuuUy/rotating-proxy/archive/refs/heads/main.zip)
+
+
 ## 📦 Cài đặt | Installation
+
+1. **VN:** Clone dự án về máy:  
+   **EN:** Clone the project to your machine:
+
+   ```bash
+   git clone https://github.com/TruongHuuUy/rotating-proxy.git
+
 
 1. **VN:** Clone dự án về máy:  
    **EN:** Clone the project to your machine:
